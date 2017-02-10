@@ -29,8 +29,20 @@ router.get('/', (req, res) => {
     }
 });
 
+router.put('/:token', (req, res) => {
+    Wc.findOne({token: req.params.token}, (err, item) => {
+        item.banner = req.body.banner;
+        item.save();
+
+        res.json({
+            status: 'success',
+            data: item
+        });
+    });
+});
+
 router.get('/:token', (req, res) => {
-    Wc.findById(req.params.token, (err, item) => {
+    Wc.findOne({token: req.params.token}, (err, item) => {
         if (!item) {
             res.status(404);
             return res.json({

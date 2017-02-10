@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
-let Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
 
 let reportSchema = new Schema({
     date: Date,
-    status: Boolean
+    status: Boolean,
+    wcId: ObjectId,
 });
 
 module.exports = reportSchema;

@@ -5,7 +5,9 @@ const ObjectId = Schema.Types.ObjectId;
 let wcSchema = new Schema({
     categoryId: ObjectId,
     status: Boolean,
-    active: Boolean
+    active: Boolean,
+    token: String,
+    banner: String
 });
 
 module.exports = mongoose.model('Wc', wcSchema);
