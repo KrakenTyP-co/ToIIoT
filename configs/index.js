@@ -19,10 +19,7 @@ if (error) {
 module.exports = {
   ...envVars,
   database: {
-    username: envVars.DB_USERNAME,
-    password: envVars.DB_PASSWORD,
-    database: envVars.DB_DATABASE,
-    host: envVars.DB_HOST,
-    dialect: 'mysql'
+    port: envVars.DB_PORT,
+    host: envVars.DB_HOST
   }
 }
