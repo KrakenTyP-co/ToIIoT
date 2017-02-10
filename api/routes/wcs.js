@@ -5,9 +5,9 @@ const Wc = require('../schemas/wc');
 
 router.get('/', (req, res) => {
     const params = req.query;
-    if('category' in params) {
+    if ('category' in params) {
         Wc.find({ categoryId: params.category }, (err, item) => {
-            if(err) {
+            if (err) {
                 console.error(err);
             }
             res.json({
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
         });
     } else {
         Wc.find((err, items) => {
-            if(err) {
+            if (err) {
                 console.error(err);
             }
             res.json({
@@ -30,10 +30,14 @@ router.get('/', (req, res) => {
 
 router.get('/:token', (req, res) => {
     Wc.findById(req.params.token, (err, item) => {
-        if(item === null) {
-            return res.sendStatus(404);
+        if (!item) {
+            res.status(404);
+            return res.json({
+                status: 'error',
+                message: 'Wc not found'
+            });
         }
-        if(err) {
+        if (err) {
             console.error(err);
         }
         res.json({
@@ -43,4 +47,4 @@ router.get('/:token', (req, res) => {
     });
 });
 
-module.exports = router; 
+module.exports = router;
