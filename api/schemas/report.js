@@ -8,4 +8,4 @@ let reportSchema = new Schema({
     wcId: ObjectId,
 });
 
-module.exports = reportSchema;
+module.exports = mongoose.model('Report', reportSchema);;
