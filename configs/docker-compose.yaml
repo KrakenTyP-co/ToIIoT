@@ -1,0 +1,13 @@
+version: '2.0'
+services:
+
+  mongo:
+    container_name: mongo-1
+    restart: always
+    image: mongo:latest
+    volumes:
+      # move it!!
+      - /tmp/live-data:/data/db
+      - /tmp/backup-data:/backups
+    ports:
+      - 27017:27017
