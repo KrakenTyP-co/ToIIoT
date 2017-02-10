@@ -1,13 +1,14 @@
 const express = require('express')
+const ObjectId = require('mongoose').Types.ObjectId;
 const router = express.Router();
 
 const Wc = require('../schemas/wc');
 
 router.get('/', (req, res) => {
     const params = req.query;
-    if ('category' in params) {
-        Wc.find({ categoryId: params.category }, (err, item) => {
-            if (err) {
+    if('category' in params) {
+        Wc.find({ categoryId: new ObjectId(params.category) }, (err, item) => {
+            if(err) {
                 console.error(err);
             }
             res.json({

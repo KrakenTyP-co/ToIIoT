@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
-let Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
 
 let wcSchema = new Schema({
-    categoryId: String,
+    categoryId: ObjectId,
     status: Boolean,
     active: Boolean
 });
