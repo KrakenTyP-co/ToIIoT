@@ -5,3 +5,5 @@ let categorySchema = new Schema({
     id:  String,
     title: String
 });
+
+module.exports = categorySchema;

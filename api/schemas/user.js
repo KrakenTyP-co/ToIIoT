@@ -5,3 +5,5 @@ let userSchema = new Schema({
     wcIds: [String],
     clientId: String
 });
+
+module.exports = userSchema;

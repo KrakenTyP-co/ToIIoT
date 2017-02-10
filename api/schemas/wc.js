@@ -8,3 +8,5 @@ let wcSchema = new Schema({
     token: String,
     banner: String
 });
+
+module.exports = wcSchema;
