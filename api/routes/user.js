@@ -22,10 +22,7 @@ router.get('/:userId', (req, res) => {
 
 const expSchema = joi.object({
   email: joi.string().email().required(),
-  first_name: joi.string().required(),
-  last_name: joi.string().required(),
-  phone: joi.string().required(),
-  language_id: joi.string().required()
+  first_name: joi.string().required()
 }).required()
 
 router.post('/', validate('body', expSchema), (req, res) => {

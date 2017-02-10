@@ -1,7 +1,6 @@
 const passport = require("passport")
 const passportJWT = require("passport-jwt")
 const { user, domain } = require("./models")
-const config = require("../config")
 const ExtractJwt = passportJWT.ExtractJwt
 const Strategy = passportJWT.Strategy
 
@@ -9,7 +8,7 @@ module.exports = {
   initialize: () => {
     passport.use(
       new Strategy({
-        secretOrKey: config.JWT_SECRET,
+        secretOrKey: process.env.JWT_SECRET,
         jwtFromRequest: ExtractJwt.fromAuthHeader()
       }, (jwtPayload, done) => {
         user.findById(jwtPayload.id, {
