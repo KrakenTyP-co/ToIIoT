@@ -1,4 +1,5 @@
 const express = require('express')
+const ObjectId = require('mongoose').Types.ObjectId;
 const router = express.Router();
 const ObjectId = require('mongoose').Types.ObjectId;
 
@@ -7,9 +8,9 @@ const Report = require('../schemas/report');
 
 router.get('/', (req, res) => {
     const params = req.query;
-    if ('category' in params) {
-        Wc.find({ categoryId: params.category }, (err, item) => {
-            if (err) {
+    if('category' in params) {
+        Wc.find({ categoryId: new ObjectId(params.category) }, (err, item) => {
+            if(err) {
                 console.error(err);
             }
             res.json({
@@ -29,7 +30,6 @@ router.get('/', (req, res) => {
         });
     }
 });
-
 
 /**
  * Report generator
@@ -55,8 +55,22 @@ router.get('/', (req, res) => {
 //     res.json({});
 // });
 
+router.put('/:token', (req, res) => {
+    Wc.findOne({token: req.params.token}, (err, item) => {
+        if ('banner' in req.body) {
+            item.banner = req.body.banner;
+            item.save();
+
+            res.json({
+                status: 'success',
+                data: item
+            });
+        }
+    });
+});
+
 router.get('/:token', (req, res) => {
-    Wc.findById(req.params.token, (err, item) => {
+    Wc.findOne({token: req.params.token}, (err, item) => {
         if (!item) {
             res.status(404);
             return res.json({
