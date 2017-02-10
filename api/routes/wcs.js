@@ -1,7 +1,6 @@
 const express = require('express')
 const ObjectId = require('mongoose').Types.ObjectId;
 const router = express.Router();
-const ObjectId = require('mongoose').Types.ObjectId;
 
 const Wc = require('../schemas/wc');
 const Report = require('../schemas/report');
