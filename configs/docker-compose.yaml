@@ -7,7 +7,7 @@ services:
     image: mongo:latest
     volumes:
       # move it!!
-      - /tmp/live-data:/data/db
-      - /tmp/backup-data:/backups
+      - ./.mongo-data/live-data:/data/db
+      - ./.mongo-data/backup-data:/backups
     ports:
       - 27017:27017
