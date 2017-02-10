@@ -31,13 +31,15 @@ router.get('/', (req, res) => {
 
 router.put('/:token', (req, res) => {
     Wc.findOne({token: req.params.token}, (err, item) => {
-        item.banner = req.body.banner;
-        item.save();
+        if ('banner' in req.body) {
+            item.banner = req.body.banner;
+            item.save();
 
-        res.json({
-            status: 'success',
-            data: item
-        });
+            res.json({
+                status: 'success',
+                data: item
+            });
+        }
     });
 });
 
