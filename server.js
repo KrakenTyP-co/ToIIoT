@@ -24,10 +24,6 @@ app.use(cors())
 app.use(compression())
 app.use(require('./api/routes'))
 
-// app.listen(process.env.PORT, process.env.HOST, () => {
-//     console.log(`App listening: http://${process.env.HOST}:${process.env.PORT}`)
-// });
-
-app.listen(9000, () => {
+app.listen(process.env.PORT, process.env.HOST, () => {
     console.log(`App listening: http://${process.env.HOST}:${process.env.PORT}`)
-});
+})
