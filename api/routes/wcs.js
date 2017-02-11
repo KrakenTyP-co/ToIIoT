@@ -48,7 +48,7 @@ router.get('/', (req, res) => {
 
 router.get('/:wcId', (req, res) => {
     const { wcId } = req.params
-    Wc.findById(wcId) //, 'id categoryId status banner active')
+    Wc.findById(wcId, 'id categoryId status banner active')
         .then(item => {
             if (!item) {
                 return res.status(404).json({
@@ -78,27 +78,29 @@ const apnProvider = new apn.Provider({
     production: false
 })
 
-const sendNotification = deviceToken => {
+const sendNotification = ({ deviceToken, title, _id }) => {
     const notification = new apn.Notification()
     notification.topic = process.env.IOS_BUNDLE_ID
     notification.expiry = ms('1h')
     notification.badge = 1
     notification.sound = 'ping.aiff'
-    notification.alert = 'Hello World \u270C'
-    notification.payload = { id: 123 }
+    notification.alert = `WC ${title} is vacant.`
+    notification.payload = { id: _id }
     return apnProvider.send(notification, deviceToken)
 }
 
-const notifyDevices = wcId => {
+const notifyDevices = ({ wcId }) => {
   return Wc.findById(wcId)
   .then(wc => {
-    return Promise.all(wc.deviceTokens.map(sendNotification))
+    return Promise.all(wc.deviceTokens.map(deviceToken => {
+      return sendNotification(wc)
+    }))
   })
 }
 
 router.get('/:wcId/notify', (req, res) => {
   const { wcId } = req.params
-  notifyDevices(wcId)
+  notifyDevices({ wcId })
   .then((results) => {
     console.log(results)
     return res.status(200).json(results).end()
@@ -110,7 +112,7 @@ router.post('/:wcId/notify', (req, res) => {
   if ('status' in req.body) {
     counter.dbWrite(req.params.wcId, req.body.status);
     if (req.body.status === false) {
-        notifyDevices(wcId)
+        notifyDevices({ wcId })
             .then((results) => {
                 console.log(results)
                 return res.status(200).json({
