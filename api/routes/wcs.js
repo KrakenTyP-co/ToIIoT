@@ -7,16 +7,24 @@ const Report = require('../schemas/report');
 
 router.get('/', (req, res) => {
     const params = req.query;
-    if('category' in params) {
-        Wc.find({ categoryId: new ObjectId(params.category) }, (err, item) => {
-            if(err) {
-                console.error(err);
-            }
-            res.json({
-                status: 'success',
-                data: item
+    if ('category' in params) {
+        try {
+            let objId = new ObjectId(params.category);
+            Wc.find({ categoryId: objId }, (err, item) => {
+                if (err) {
+                    console.error(err);
+                }
+                res.json({
+                    status: 'success',
+                    data: item
+                });
             });
-        });
+        } catch (e) {
+            res.status(400).json({
+                status: 'error',
+                message: 'Invalid category'
+            });
+        }
     } else {
         Wc.find((err, items) => {
             if (err) {
@@ -55,7 +63,7 @@ router.get('/', (req, res) => {
 // });
 
 router.put('/:token', (req, res) => {
-    Wc.findOne({token: req.params.token}, (err, item) => {
+    Wc.findOne({ token: req.params.token }, (err, item) => {
         if ('banner' in req.body) {
             item.banner = req.body.banner;
             item.save();
@@ -69,7 +77,7 @@ router.put('/:token', (req, res) => {
 });
 
 router.get('/:token', (req, res) => {
-    Wc.findOne({token: req.params.token}, (err, item) => {
+    Wc.findOne({ token: req.params.token }, (err, item) => {
         if (!item) {
             res.status(404);
             return res.json({
