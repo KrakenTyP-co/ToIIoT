@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
-let Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
 
 let wcSchema = new Schema({
-  categoryId: String,
+  categoryId: ObjectId,
   status: Boolean,
   active: Boolean,
-  deviceTokens: [String]
+  token: String,
+  deviceTokens: [String],
+  banner: String,
+  usageCount: Number,
+  inactivity: Number
 });
 
 module.exports = mongoose.model('Wc', wcSchema);
