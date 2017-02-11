@@ -15,7 +15,7 @@ export class Generator {
 
     doRequest() {
         let timer = setTimeout(() => {
-            axios.post(`http://${process.env.HOST}:${process.env.PORT}/wc/589e3bf575d52d722a3d2c08/notify`, {
+            axios.post(`http://${process.env.HOST}:${process.env.PORT}/wc/589e54647ebfb8f213a98f93/notify`, {
                 status: this.status
             })
                 .then(() => {

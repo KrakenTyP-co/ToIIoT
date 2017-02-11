@@ -136,6 +136,12 @@ router.get('/:wcId/last', (req, res) => {
                     status: 'success',
                     reports: items || []
                 });
+            })
+            .catch(() => {
+                return res.status(400).json({
+                    status: 'error',
+                    message: 'Wrong wc id'
+                })
             });
     } else {
         res.json({
