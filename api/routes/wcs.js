@@ -83,12 +83,16 @@ const sendNotification = deviceToken => {
     return apnProvider.send(notification, deviceToken)
 }
 
-router.get('/:wcId/notify', (req, res) => {
-  const { wcId } = req.params
-  Wc.findById(wcId)
+const notifyDevices = wcId => {
+  return Wc.findById(wcId)
   .then(wc => {
     return Promise.all(wc.deviceTokens.map(sendNotification))
   })
+}
+
+router.get('/:wcId/notify', (req, res) => {
+  const { wcId } = req.params
+  notifyDevices(wcId)
   .then((results) => {
     console.log(results)
     return res.status(200).json(results).end()
@@ -97,14 +101,19 @@ router.get('/:wcId/notify', (req, res) => {
 })
 
 router.post('/:wcId/notify', (req, res) => {
-    if ('status' in req.body) {
-        counter.dbWrite(req.params.wcId, req.body.status);
-    }
-
-    res.json({
-        status: 'success'
-    });
-});
+  if ('status' in req.body) {
+    counter.dbWrite(req.params.wcId, req.body.status);
+  }
+  notifyDevices(wcId)
+  .then((results) => {
+    console.log(results)
+    return res.status(200).json({
+      status: 'success',
+      data: results
+    }).end()
+  })
+  .catch(err => console.log(err))
+})
 
 router.get('/:wcId/last', (req, res) => {
     if ('from' in req.query) {
