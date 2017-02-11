@@ -4,6 +4,8 @@ const cors = require('cors')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const compression = require('compression')
+
+import {Generator} from './api/generator/generator';
     // const auth = require('./src/auth')
 
 const mongoose = require('mongoose');
@@ -26,4 +28,7 @@ app.use(require('./api/routes'))
 
 app.listen(process.env.PORT, process.env.HOST, () => {
     console.log(`App listening: http://${process.env.HOST}:${process.env.PORT}`)
-})
+
+});
+
+new Generator();
