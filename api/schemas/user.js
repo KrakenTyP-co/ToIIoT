@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 let userSchema = new Schema({
-    wcIds: [String],
-    clientId: String
+  wcIds: [String],
+  deviceToken: String
 });
 
 module.exports = userSchema;

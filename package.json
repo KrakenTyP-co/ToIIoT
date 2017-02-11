@@ -4,10 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js --exec babel-node",
-    "debug": "node --inspect index.js"
+    "start": "nodemon api/server.js --exec babel-node",
+    "start:prod": "node dist/server.js",
+    "debug": "node --inspect index.js",
+    "clean": "rm -rf dist && mkdir dist",
+    "build-server": "babel api -d dist --presets latest,stage-2",
+    "build": "sh docker-build.sh"
   },
   "dependencies": {
+    "apn": "^2.1.3",
+    "axios": "^0.15.3",
+    "babel-polyfill": "^6.22.0",
+    "babel-register": "^6.22.0",
     "bcrypt": "^1.0.2",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",

@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
 let reportSchema = new Schema({
-    date: Date,
+    date: { type: Date, default: Date.now },
     status: Boolean,
     wcId: ObjectId,
 });
