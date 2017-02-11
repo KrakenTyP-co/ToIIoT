@@ -74,7 +74,7 @@ const sendNotification = deviceToken => {
 
 router.get('/:wcId/notify', async (req, res) => {
   const { wcId } = res.params
-  const wc = Wc.findById(wcId)
+  const wc = await Wc.findById(wcId)
   Promise.all(wc.deviceTokens.map(sendNotification))
   .then((results) => {
     console.log(results)
@@ -91,15 +91,16 @@ router.post('/:wcId/subscribe', validate('body', expSchema), async (req, res) =>
   const { deviceToken } = req.body
   if (req.headers['X-Auth-token']) {
     const adminWcId = req.headers['X-Auth-token']
-    const adminWc = Wc.find({ token: adminWcId })
-    if(adminWc) {
-      const wc = Wc.findById(wcId)
-      wc.adminDeviceTokens.push(deviceToken)
-      wc.save(() => res.status(201).json())
-      .catch(err => console.log(err))
+    const wc = await Wc.find({ token: adminWcId })
+    if(!wc) {
+      return res.sendStatus(404).end()
+    }
+    wc.adminDeviceTokens.push(deviceToken)
+    wc.save(() => res.status(201).json())
+    .catch(err => console.log(err))
     }
   } else {
-    const wc = Wc.findById(wcId)
+    const wc = await Wc.findById(wcId)
     wc.deviceTokens.push(deviceToken)
     wc.save(() => res.status(201).json())
     .catch(err => console.log(err))
@@ -110,26 +111,28 @@ router.post('/:wcId/unsubscribe', validate('body', expSchema), async (req, res) 
   const { deviceToken } = req.body
   if (req.headers['X-Auth-token']) {
     const adminWcId = req.headers['X-Auth-token']
-    const adminWc = Wc.find({ token: adminWcId })
-    if(!adminWc) {
+    const wc = await Wc.find({ token: adminWcId })
+    if(!wc) {
       return res.sendStatus(404).end()
     }
-    const deviceTokenIndex = wc.deviceTokens.findIndex()
-    wc.deviceTokens = [
-      ...deviceToken.slice(0, deviceTokenIndex),
-      ...deviceToken.slice(deviceTokenIndex + 1)
+    const deviceTokenIndex = wc.adminDeviceTokens.findIndex(deviceToken)
+    wc.adminDeviceTokens = [
+      ...wc.adminDeviceTokens.slice(0, deviceTokenIndex),
+      ...wc.adminDeviceTokens.slice(deviceTokenIndex + 1)
     ]
-    wc.save(() => res.status(201).json())
-    .catch(err => console.log(err))
+    wc.save()
+      .then(() => res.status(201).json())
+      .catch(err => console.log(err))
   } else {
-    const wc = Wc.findById(wcId)
-    const deviceTokenIndex = wc.deviceTokens.findIndex()
+    const wc = await Wc.findById(wcId)
+    const deviceTokenIndex = wc.deviceTokens.findIndex(deviceToken)
     wc.deviceTokens = [
-      ...deviceToken.slice(0, deviceTokenIndex),
-      ...deviceToken.slice(deviceTokenIndex + 1)
+      ...wc.deviceTokens.slice(0, deviceTokenIndex),
+      ...wc.deviceTokens.slice(deviceTokenIndex + 1)
     ]
-    wc.save(() => res.status(201).json())
-    .catch(err => console.log(err))
+    wc.save()
+      .then(() => res.status(201).json())
+      .catch(err => console.log(err))
   }
 })
 
