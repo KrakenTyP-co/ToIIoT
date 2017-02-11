@@ -126,30 +126,37 @@ router.post('/:wcId/notify', (req, res) => {
 })
 
 router.get('/:wcId/last', (req, res) => {
-    if ('from' in req.query) {
-        Report.find({
+    try {
+        if ('from' in req.query) {
+            Report.find({
                 wcId: new ObjectId(req.params.wcId),
                 date: {
                     $gte: moment(req.query.from).toDate()
                 }
             })
-            .then((items) => {
-                res.json({
-                    status: 'success',
-                    reports: items || []
-                });
-            })
-            .catch(() => {
-                return res.status(400).json({
-                    status: 'error',
-                    message: 'Wrong wc id'
+                .then((items) => {
+                    res.json({
+                        status: 'success',
+                        reports: items || []
+                    });
                 })
+                .catch(() => {
+                    return res.status(400).json({
+                        status: 'error',
+                        message: 'Wrong wc id'
+                    })
+                });
+        } else {
+            res.json({
+                status: 'success',
+                reports: []
             });
-    } else {
-        res.json({
-            status: 'success',
-            reports: []
-        });
+        }
+    } catch (e) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Something goes wrong (wcid, date format)'
+        })
     }
 });
 
