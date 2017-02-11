@@ -58,13 +58,20 @@ router.put('/:token', (req, res) => {
     Wc.findOne({token: req.params.token}, (err, item) => {
         if ('banner' in req.body) {
             item.banner = req.body.banner;
-            item.save();
-
-            res.json({
-                status: 'success',
-                data: item
-            });
         }
+        if ('usageCount' in req.body) {
+            item.usageCount = req.body.usageCount; // @todo validate in notifications
+        }
+        if ('inactivity' in req.body) {
+            item.inactivity = req.body.inactivity; // @todo validate in notifications
+        }
+
+        item.save();
+
+        res.json({
+            status: 'success',
+            data: item
+        });
     });
 });
 
