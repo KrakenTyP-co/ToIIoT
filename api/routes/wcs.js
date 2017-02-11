@@ -202,6 +202,13 @@ router.post('/:wcId/unsubscribe', validate('body', expSchema), (req, res) => {
 
 router.put('/:token', (req, res) => {
     Wc.findOne({ token: req.params.token }, (err, item) => {
+        if(!item) {
+            res.status(404);
+            return res.json({
+                status: 'error',
+                message: 'Wc not found'
+            });
+        }
         if ('banner' in req.body) {
             item.banner = req.body.banner;
         }
