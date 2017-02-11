@@ -1,15 +1,21 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: http://pluto.treecom.net:8088/
 
 # TolloT API Documentation
 
 API Docs...
 
+- API URL: http://pluto.treecom.net:8088/
+- X-Auth-Token header is WC device token
+
 ## Toilets Collection [/wc]
 
 ### List WCs [GET /wc{?cateogry}]
 
-List of toilets. Header is optional.
+List of toilets.
+
+Header is optional.
+
 
 + Parameters
 
@@ -35,6 +41,9 @@ List of toilets. Header is optional.
                             "status": true,
                             "active": true,
                             "token": "28f9j394hf87hh4f",
+                            "title": "Hore",
+                            "inactivity": 0,
+                            "usageCount": 123,
                             "banner": "http://someurl.com/banner.jpg"
                         }
                 ]
@@ -67,6 +76,9 @@ Get toilate state. Header is optional.
                         "status": true,
                         "active": true,
                         "token": "28f9j394hf87hh4f",
+                        "title": "Hore",
+                        "inactivity": 0,
+                        "usageCount": 5,
                         "banner": "http://someurl.com/banner.jpg"
                     }
 
@@ -85,6 +97,7 @@ Get toilate state. Header is optional.
 ### Subscribe to WC state [POST /wc/{_id}/subsribe]
 
 Subscribe user mobile to WC. If header with wc token is set it mean manager is subscribing to alerts.
+
 Header is optional.
 
 + Parameters
@@ -121,6 +134,7 @@ Header is optional.
 
 
 Unsubscribe user mobile from WC. If header with wc token is set it mean manager is subscribing to alerts.
+
 Header is optional.
 
 
@@ -154,7 +168,9 @@ Header is optional.
 
 ### Update WC  [PUT /wc/{_id}]
 
-Update WC Setttings. Header is required.
+Update WC Setttings.
+
+Header is required.
 
 + Request (application/json)
 
@@ -180,6 +196,9 @@ Update WC Setttings. Header is required.
                     "status": true,
                     "active": true,
                     "token": "28f9j394hf87hh4f",
+                    "title": "Hore",
+                    "inactivity": 0,
+                    "usageCount": 5,
                     "banner": "http://someurl.com/banner.jpg"
                 }
             }
@@ -199,8 +218,34 @@ Update WC Setttings. Header is required.
                 "status": "success",
                 "data": [
                     {
-                        "_id": "98hf92h7387f4873gf87g"
+                        "_id": "98hf92h7387f4873gf87g",
                         "title": "Kosice"
+                    }
+                ]
+            }
+
+
+## Reports Collection [/reports]
+
+### Get reports [GET /reports]
+
+Header is required.
+
++ Request
+
+    + Headers
+
+            X-Auth-Token: JCAiSjGefNprusgyRmtN51_CoQUutKOa9cPBu18kDCI
+
+
++ Response 200 (application/json)
+
+
+            {
+                "status": "success",
+                "data": [
+                    {
+                        "idWc": "ro2i3niof32i2"
                     }
                 ]
             }
