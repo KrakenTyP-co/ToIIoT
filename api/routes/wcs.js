@@ -48,7 +48,7 @@ router.get('/', (req, res) => {
 
 router.get('/:wcId', (req, res) => {
     const { wcId } = req.params
-    Wc.findById(wcId, 'id categoryId status banner active')
+    Wc.findById(wcId, 'id categoryId status banner active title')
         .then(item => {
             if (!item) {
                 return res.status(404).json({
