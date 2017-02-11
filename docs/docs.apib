@@ -94,6 +94,46 @@ Get toilate state. Header is optional.
             }
 
 
+### Get WC state with token [PUT /wc/token/{token}]
+
+Get toilate state as manager. Header is optional.
+
++ Parameters
+
+    + token: "28f9j394hf87hh4f" (optional, string) - Toilet token
+
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "status": "success",
+                "data": {
+                        "_id":"2ud92939dj203j0d2j923jd",
+                        "categoryId": "982j9f8h2983fh98",
+                        "status": true,
+                        "active": true,
+                        "token": "28f9j394hf87hh4f",
+                        "title": "Hore",
+                        "inactivity": 0,
+                        "usageCount": 5,
+                        "banner": "http://someurl.com/banner.jpg"
+                    }
+
+            }
+
++ Response 404 (application/json)
+
+    + Body
+
+            {
+                "status": "error",
+                "message": "WC not found"
+            }
+
+
+
 ### Subscribe to WC [POST /wc/{_id}/subsribe]
 
 Subscribe user mobile to WC. If header with wc token is set it mean manager is subscribing to alerts.
