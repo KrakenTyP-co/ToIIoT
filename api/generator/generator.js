@@ -26,6 +26,7 @@ export class Generator {
                     this.doRequest();
                 })
                 .catch((e) => {
+                    console.log(e);
                     console.log('Generated random - fail');
                 });
         }, this.randomInterval);

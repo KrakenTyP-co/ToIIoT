@@ -116,7 +116,7 @@ router.post('/:wcId/notify', (req, res) => {
   if ('status' in req.body) {
     counter.dbWrite(req.params.wcId, req.body.status);
     if (req.body.status === false) {
-        notifyDevices({ wcId })
+        notifyDevices({ wcId: req.params.wcId })
             .then((results) => {
                 console.log(results)
                 return res.status(200).json({
@@ -125,6 +125,10 @@ router.post('/:wcId/notify', (req, res) => {
                 }).end()
             })
             .catch(err => console.log(err))
+    } else {
+        return res.status(200).json({
+            status: 'success'
+        }).end()
     }
   }
 })
