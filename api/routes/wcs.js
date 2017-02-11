@@ -51,7 +51,10 @@ router.get('/:wcId', (req, res) => {
   Wc.findById(wcId) //, 'id categoryId status banner active')
     .then(item => {
       if(!item) {
-        return res.status(404).end()
+        return res.status(404).json({
+           status: 'error',
+           message: 'Wc not found'
+        });
       }
       return res.json({
         status: 'success',
