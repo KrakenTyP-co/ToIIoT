@@ -109,16 +109,18 @@ router.get('/:wcId/notify', (req, res) => {
 router.post('/:wcId/notify', (req, res) => {
   if ('status' in req.body) {
     counter.dbWrite(req.params.wcId, req.body.status);
+    if (req.body.status === false) {
+        notifyDevices(wcId)
+            .then((results) => {
+                console.log(results)
+                return res.status(200).json({
+                    status: 'success',
+                    data: results
+                }).end()
+            })
+            .catch(err => console.log(err))
+    }
   }
-  notifyDevices(wcId)
-  .then((results) => {
-    console.log(results)
-    return res.status(200).json({
-      status: 'success',
-      data: results
-    }).end()
-  })
-  .catch(err => console.log(err))
 })
 
 router.get('/:wcId/last', (req, res) => {
