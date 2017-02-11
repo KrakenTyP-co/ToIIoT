@@ -6,6 +6,7 @@ let wcSchema = new Schema({
   categoryId: ObjectId,
   status: Boolean,
   active: Boolean,
+  title: String,
   token: String,
   deviceTokens: [String],
   adminDeviceTokens: [String],
