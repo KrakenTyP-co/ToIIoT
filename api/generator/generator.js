@@ -4,7 +4,8 @@ export const INTERVAL = 10000;
 
 export class Generator {
 
-    constructor() {
+    constructor(id) {
+        this.id = id;
         this.status = true;
         this.doRequest();
     }
@@ -15,7 +16,7 @@ export class Generator {
 
     doRequest() {
         let timer = setTimeout(() => {
-            axios.post(`http://${process.env.HOST}:${process.env.PORT}/wc/589e54647ebfb8f213a98f93/notify`, {
+            axios.post(`http://${process.env.HOST}:${process.env.PORT}/wc/${this.id}/notify`, {
                 status: this.status
             })
                 .then(() => {

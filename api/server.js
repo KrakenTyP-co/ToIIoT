@@ -39,4 +39,9 @@ app.get('*', function(req, res) {
     });
 });
 
-new Generator();
+new Generator('589e54647ebfb8f213a98f93');
+new Generator('589e54747ebfb8f213a98faa');
+new Generator('589e96507ebfb8f213a9bcd6');
+new Generator('589e96667ebfb8f213a9bcf4');
+new Generator('589e967e7ebfb8f213a9bd0a');
+new Generator('589e96987ebfb8f213a9bd29');
