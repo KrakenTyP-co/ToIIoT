@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-export const INTERVAL = 1000;
+export const INTERVAL = 10000;
 
 export class Generator {
 

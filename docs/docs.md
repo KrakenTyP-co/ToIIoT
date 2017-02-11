@@ -9,11 +9,18 @@ API Docs...
 
 ### List WCs [GET /wc{?cateogry}]
 
-List of toilets.
+List of toilets. Header is optional.
 
 + Parameters
 
     + category: "2oucniwjni" (optional, string) - Filter by category id
+
++ Request
+
+    + Headers
+
+            X-Auth-Token: JCAiSjGefNprusgyRmtN51_CoQUutKOa9cPBu18kDCI
+
 
 + Response 200 (application/json)
 
@@ -23,6 +30,7 @@ List of toilets.
                 "status": "success",
                 "data": [
                         {
+                            "_id":"2ud92939dj203j0d2j923jd",
                             "categoryId": "982j9f8h2983fh98",
                             "status": true,
                             "active": true,
@@ -32,13 +40,19 @@ List of toilets.
                 ]
             }
 
-### Get WC state [GET /wc/{token}]
+### Get WC state [GET /wc/{_id}]
 
-Get toilate state
+Get toilate state. Header is optional.
 
 + Parameters
 
-    + token: "2oucniwjni" (optional, string) - Toilet token
+    + _id: "2oucniwjni" (optional, string) - Toilet id
+
++ Request
+
+    + Headers
+
+            X-Auth-Token: JCAiSjGefNprusgyRmtN51_CoQUutKOa9cPBu18kDCI
 
 
 + Response 200 (application/json)
@@ -48,6 +62,7 @@ Get toilate state
             {
                 "status": "success",
                 "data": {
+                        "_id":"2ud92939dj203j0d2j923jd",
                         "categoryId": "982j9f8h2983fh98",
                         "status": true,
                         "active": true,
@@ -67,13 +82,14 @@ Get toilate state
             }
 
 
-### Subscribe to WC state [POST /wc/{wcId}/subsribe]
+### Subscribe to WC state [POST /wc/{_id}/subsribe]
 
 Subscribe user mobile to WC. If header with wc token is set it mean manager is subscribing to alerts.
+Header is optional.
 
 + Parameters
 
-    + wcId: "2oucniwjni" (optional, string) - Toilet ID
+    + _id: "2oucniwjni" (optional, string) - Toilet ID
 
 
 + Request (application/json)
@@ -101,15 +117,16 @@ Subscribe user mobile to WC. If header with wc token is set it mean manager is s
 
 
 
-### Unsubscribe to WC state [POST /wc/{wcId}/unsubsribe]
+### Unsubscribe to WC state [POST /wc/{_id}/unsubsribe]
 
 
 Unsubscribe user mobile from WC. If header with wc token is set it mean manager is subscribing to alerts.
+Header is optional.
 
 
 + Parameters
 
-    + wcId: "2oucniwjni" (optional, string) - Toilet ID
+    + _id: "2oucniwjni" (optional, string) - Toilet ID
 
 
 + Request (application/json)
@@ -135,15 +152,22 @@ Unsubscribe user mobile from WC. If header with wc token is set it mean manager 
             }
 
 
-### Update WC  [PUT /wc/{token}]
+### Update WC  [PUT /wc/{_id}]
 
-Update WC Setttings
+Update WC Setttings. Header is required.
 
 + Request (application/json)
 
-        {
-            "banner": "http://someurl.com/banner.jpg"
-        }
+
+    + Headers
+
+            X-Auth-Token: JCAiSjGefNprusgyRmtN51_CoQUutKOa9cPBu18kDCI
+
+    + Body
+
+            {
+                "banner": "http://someurl.com/banner.jpg"
+            }
 
 + Response 200 (application/json)
 
