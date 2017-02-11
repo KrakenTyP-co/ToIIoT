@@ -89,19 +89,6 @@ const sendNotification = deviceToken => {
     return apnProvider.send(notification, deviceToken)
 }
 
-<<<<<<< HEAD
-router.get('/:wcId/notify', (req, res) => {
-    const { wcId } = req.params
-    Wc.findById(wcId)
-        .then(wc => {
-            return Promise.all(wc.deviceTokens.map(sendNotification))
-        })
-        .then((results) => {
-            console.log(results)
-            return res.status(200).json(results).end()
-        })
-        .catch(err => console.log(err))
-=======
 const notifyDevices = wcId => {
   return Wc.findById(wcId)
   .then(wc => {
@@ -117,7 +104,6 @@ router.get('/:wcId/notify', (req, res) => {
     return res.status(200).json(results).end()
   })
   .catch(err => console.log(err))
->>>>>>> a0ac5628c7bda8a65be5747777deccbcfe9eda75
 })
 
 router.post('/:wcId/notify', (req, res) => {
