@@ -9,30 +9,48 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const Report = require('../schemas/report');
 
 router.get('/', (req, res) => {
-    const params = req.query;
-    if('category' in params) {
-        Wc.find({ categoryId: new ObjectId(params.category) }, (err, item) => {
-            if(err) {
-                console.error(err);
-            }
-            res.json({
-                status: 'success',
-                data: item
-            });
-        });
-    } else {
-        Wc.find((err, items) => {
-            if (err) {
-                console.error(err);
-            }
-            res.json({
-                status: 'success',
-                data: items
-            });
-        });
-    }
-});
+  const params = req.query
+  if('category' in params) {
+    Wc.find({
+      categoryId: new ObjectId(params.category)
+    }, 'id categoryId status banner active', (err, item) => {
+      if(err) {
+        console.error(err)
+      }
+      res.json({
+        status: 'success',
+        data: item
+      })
+    })
+  } else {
+    Wc.find((err, items) => {
+      if (err) {
+        console.error(err)
+      }
+      res.json({
+        status: 'success',
+        data: items
+      })
+    })
+  }
+})
 
+router.get('/:wcId', (req, res) => {
+  const { wcId } = req.params
+  Wc.findById(wcId, 'id categoryId status banner active')
+    .then(item => {
+      if(!item) {
+        return res.status(404).end()
+      }
+      return res.json({
+        status: 'success',
+        data: item
+      })
+    })
+    .catch(() => {
+      console.error(err)
+    })
+})
 
 const apnProvider = new apn.Provider({
   token: {
@@ -71,22 +89,48 @@ const expSchema = joi.object({
 
 router.post('/:wcId/subscribe', validate('body', expSchema), async (req, res) => {
   const { deviceToken } = req.body
-  const wc = Wc.findById(wcId)
-  wc.deviceTokens.push(deviceToken)
-  wc.save(() => res.status(201).json())
-  .catch(err => console.log(err))
+  if (req.headers['X-Auth-token']) {
+    const adminWcId = req.headers['X-Auth-token']
+    const adminWc = Wc.find({ token: adminWcId })
+    if(adminWc) {
+      const wc = Wc.findById(wcId)
+      wc.adminDeviceTokens.push(deviceToken)
+      wc.save(() => res.status(201).json())
+      .catch(err => console.log(err))
+    }
+  } else {
+    const wc = Wc.findById(wcId)
+    wc.deviceTokens.push(deviceToken)
+    wc.save(() => res.status(201).json())
+    .catch(err => console.log(err))
+  }
 })
 
 router.post('/:wcId/unsubscribe', validate('body', expSchema), async (req, res) => {
   const { deviceToken } = req.body
-  const wc = Wc.findById(wcId)
-  const deviceTokenIndex = wc.deviceTokens.findIndex()
-  wc.deviceTokens = [
-    ...deviceToken.slice(0, deviceTokenIndex),
-    ...deviceToken.slice(deviceTokenIndex + 1)
-  ]
-  wc.save(() => res.status(201).json())
-  .catch(err => console.log(err))
+  if (req.headers['X-Auth-token']) {
+    const adminWcId = req.headers['X-Auth-token']
+    const adminWc = Wc.find({ token: adminWcId })
+    if(!adminWc) {
+      return res.sendStatus(404).end()
+    }
+    const deviceTokenIndex = wc.deviceTokens.findIndex()
+    wc.deviceTokens = [
+      ...deviceToken.slice(0, deviceTokenIndex),
+      ...deviceToken.slice(deviceTokenIndex + 1)
+    ]
+    wc.save(() => res.status(201).json())
+    .catch(err => console.log(err))
+  } else {
+    const wc = Wc.findById(wcId)
+    const deviceTokenIndex = wc.deviceTokens.findIndex()
+    wc.deviceTokens = [
+      ...deviceToken.slice(0, deviceTokenIndex),
+      ...deviceToken.slice(deviceTokenIndex + 1)
+    ]
+    wc.save(() => res.status(201).json())
+    .catch(err => console.log(err))
+  }
 })
 
 /**

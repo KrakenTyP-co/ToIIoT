@@ -8,6 +8,7 @@ let wcSchema = new Schema({
   active: Boolean,
   token: String,
   deviceTokens: [String],
+  adminDeviceTokens: [String],
   banner: String,
   usageCount: Number,
   inactivity: Number
