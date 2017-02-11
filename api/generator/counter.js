@@ -22,14 +22,14 @@ export class Counter {
 
                 this.counter.set(wcId, value);
 
-                this.callNotification(value);
+                this.callNotification(wcId, value);
             }
         });
     }
 
-    callNotification(value) {
+    callNotification(wcId, value) {
         if (typeof this.notificationFunction === 'function') {
-            this.notificationFunction(value);
+            this.notificationFunction(wcId, value);
         }
     }
 

@@ -11,7 +11,7 @@ const Report = require('../schemas/report');
 
 import {Counter} from '../generator/counter';
 let counter = new Counter();
-counter.notificationFunction = null; // @todo here register call function
+counter.notificationFunction = (wcId, count) => {}; // @todo here register call function
 
 router.get('/', (req, res) => {
     const params = req.query
