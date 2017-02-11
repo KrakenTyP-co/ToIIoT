@@ -5,8 +5,13 @@ const apn = require('apn')
 const joi = require('joi')
 const { validate } = require('../helpers')
 const Wc = require('../schemas/wc')
+const moment = require('moment');
 const ObjectId = require('mongoose').Types.ObjectId;
 const Report = require('../schemas/report');
+
+import {Counter} from '../generator/counter';
+let counter = new Counter();
+counter.notificationFunction = null; // @todo here register call function
 
 router.get('/', (req, res) => {
     const params = req.query
@@ -90,6 +95,35 @@ router.get('/:wcId/notify', (req, res) => {
   })
   .catch(err => console.log(err))
 })
+
+router.post('/:wcId/notify', (req, res) => {
+    if ('status' in req.body) {
+        counter.dbWrite(req.params.wcId, req.body.status);
+    }
+
+    res.json({
+        status: 'success'
+    });
+});
+
+router.get('/:wcId/last', (req, res) => {
+    if ('from' in req.query) {
+        Report.find({wcId: new ObjectId(req.params.wcId), date: {
+            $gte: moment(req.query.from).toDate()
+        }})
+            .then((items) => {
+                res.json({
+                    status: 'success',
+                    reports: items || []
+                });
+            });
+    } else {
+        res.json({
+            status: 'success',
+            reports: []
+        });
+    }
+});
 
 const expSchema = joi.object({
     deviceToken: joi.string().required()

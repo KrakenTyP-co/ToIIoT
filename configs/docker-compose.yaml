@@ -6,7 +6,7 @@ services:
     restart: always
     image: docker-registry.treecom.net:5000/treecom/tollot
     ports:
-      - 8088:8081
+      - 8088:3000
 
   mongo:
     container_name: mongo-1
@@ -17,4 +17,4 @@ services:
       - ./.mongo-data/live-data:/data/db
       - ./.mongo-data/backup-data:/backups
     ports:
-      - 27017:27017
+      - 27018:27017
