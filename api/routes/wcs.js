@@ -147,7 +147,7 @@ router.get('/:wcId/last', (req, res) => {
                 .catch(() => {
                     return res.status(400).json({
                         status: 'error',
-                        message: 'Wrong wc id'
+                        message: 'Wrong wc id or device is offline'
                     })
                 });
         } else {
@@ -159,7 +159,7 @@ router.get('/:wcId/last', (req, res) => {
     } catch (e) {
         return res.status(400).json({
             status: 'error',
-            message: 'Something goes wrong (wcid, date format)'
+            message: 'Something goes wrong (wcid, date format or device is offline)'
         })
     }
 });
@@ -310,6 +310,35 @@ router.put('/:wcId', (req, res) => {
                 message: 'Wrong wc id'
             })
         });
+});
+
+
+router.put('/token/:token', (req, res) => {
+    Wc.findOne({ token: req.params.token }, (err, item) => {
+        if(!item) {
+            res.status(404);
+            return res.json({
+                status: 'error',
+                message: 'Wc not found'
+            });
+        }
+        if ('banner' in req.body) {
+            item.banner = req.body.banner;
+        }
+        if ('usageCount' in req.body) {
+            item.usageCount = req.body.usageCount;
+        }
+        if ('inactivity' in req.body) {
+            item.inactivity = req.body.inactivity;
+        }
+
+        item.save();
+
+        res.json({
+            status: 'success',
+            data: item
+        });
+    });
 });
 
 module.exports = router;
