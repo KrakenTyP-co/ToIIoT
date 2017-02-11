@@ -157,6 +157,7 @@ const expSchema = joi.object({
 
 router.post('/:wcId/subscribe', validate('body', expSchema), (req, res) => {
   const { deviceToken } = req.body
+  console.log('deviceToken', deviceToken);
   const { wcId } = req.params
   if (req.headers['X-Auth-token']) {
     const adminWcId = req.headers['X-Auth-token']

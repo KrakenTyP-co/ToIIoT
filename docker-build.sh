@@ -11,8 +11,8 @@ WORKDIR=$PWD
 echo "Start building container ${CONTAINER} ..."
 
 
-rm -rf node_modules &&
-npm install &&
+#rm -rf node_modules &&
+#npm install && # do it self developer
 npm run clean &&
 npm run build-server &&
 cp package.json ./dist
