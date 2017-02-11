@@ -305,4 +305,33 @@ router.put('/:wcId', (req, res) => {
         });
 });
 
+
+router.put('/token/:token', (req, res) => {
+    Wc.findOne({ token: req.params.token }, (err, item) => {
+        if(!item) {
+            res.status(404);
+            return res.json({
+                status: 'error',
+                message: 'Wc not found'
+            });
+        }
+        if ('banner' in req.body) {
+            item.banner = req.body.banner;
+        }
+        if ('usageCount' in req.body) {
+            item.usageCount = req.body.usageCount;
+        }
+        if ('inactivity' in req.body) {
+            item.inactivity = req.body.inactivity;
+        }
+
+        item.save();
+
+        res.json({
+            status: 'success',
+            data: item
+        });
+    });
+});
+
 module.exports = router;
