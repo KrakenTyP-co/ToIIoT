@@ -78,22 +78,26 @@ const apnProvider = new apn.Provider({
     production: false
 })
 
-const sendNotification = ({ deviceToken, title, _id }) => {
+const sendNotification = ({ title, _id }, deviceToken) => {
+    console.log(deviceToken, title, _id)
     const notification = new apn.Notification()
     notification.topic = process.env.IOS_BUNDLE_ID
     notification.expiry = ms('1h')
     notification.badge = 1
     notification.sound = 'ping.aiff'
     notification.alert = `WC ${title} is vacant.`
-    notification.payload = { id: _id }
+    // notification.payload = { id: _id }
     return apnProvider.send(notification, deviceToken)
 }
 
 const notifyDevices = ({ wcId }) => {
   return Wc.findById(wcId)
   .then(wc => {
-    return Promise.all(wc.deviceTokens.map(deviceToken => {
-      return sendNotification(wc)
+    const uniqueDeviceTokens = wc.deviceTokens.filter((elem, index, self) => {
+      return index == self.indexOf(elem)
+    })
+    return Promise.all(uniqueDeviceTokens.map(deviceToken => {
+      return sendNotification(wc, deviceToken)
     }))
   })
 }
@@ -186,6 +190,9 @@ router.post('/:wcId/subscribe', validate('body', expSchema), (req, res) => {
     .then(wc => {
       if(!wc) {
         return res.sendStatus(404).end()
+      }
+      if(wc.deviceTokens.indexOf(deviceToken) === -1) {
+        return res.sendStatus(204).end()
       }
       wc.deviceTokens.push(deviceToken)
       return wc.save()
