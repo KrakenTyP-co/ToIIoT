@@ -10,8 +10,8 @@ import { Generator } from './generator/generator'
 const mongoose = require('mongoose')
 
 let options = {
-  db: { native_parser: true },
-  server: { poolSize: 5 },
+    db: { native_parser: true },
+    server: { poolSize: 5 },
 }
 options.server.socketOptions = { keepAlive: -1 };
 mongoose.connect(`mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/toiiot`, options);
@@ -30,6 +30,13 @@ app.use(require('./routes'))
 app.listen(process.env.PORT, process.env.HOST, () => {
     console.log(`App listening: http://${process.env.HOST}:${process.env.PORT}`)
 
+});
+
+app.get('*', function(req, res) {
+    res.status(404).send({
+        status: "error",
+        message: "These are not the droids you looking for"
+    });
 });
 
 new Generator();
