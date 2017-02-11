@@ -96,14 +96,15 @@ router.post('/:wcId/subscribe', validate('body', expSchema), async (req, res) =>
       return res.sendStatus(404).end()
     }
     wc.adminDeviceTokens.push(deviceToken)
-    wc.save(() => res.status(201).json())
-    .catch(err => console.log(err))
-    }
+    wc.save()
+      .then(() => res.status(201).json())
+      .catch(err => console.log(err))
   } else {
     const wc = await Wc.findById(wcId)
     wc.deviceTokens.push(deviceToken)
-    wc.save(() => res.status(201).json())
-    .catch(err => console.log(err))
+    wc.save()
+      .then(() => res.status(201).json())
+      .catch(err => console.log(err))
   }
 })
 
