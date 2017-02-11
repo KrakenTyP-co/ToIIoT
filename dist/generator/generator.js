@@ -10,7 +10,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var axios = require('axios');
 
-var INTERVAL = exports.INTERVAL = 1000;
+var INTERVAL = exports.INTERVAL = 10000;
 
 var Generator = exports.Generator = function () {
     function Generator() {

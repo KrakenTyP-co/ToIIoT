@@ -16,7 +16,7 @@ let options = {
   server: { poolSize: 5 },
 }
 options.server.socketOptions = { keepAlive: -1 };
-mongoose.connect(`mongodb://${process.env.DB_HOST}/toiiot`, options);
+mongoose.connect(`mongodb://${process.env.DB_HOST}:${process.env.PORT}/toiiot`, options);
 
 const app = express()
 

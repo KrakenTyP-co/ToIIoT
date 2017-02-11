@@ -9,11 +9,13 @@
     "debug": "node --inspect index.js",
     "clean": "rm -rf dist && mkdir dist",
     "build-server": "babel api -d dist --presets latest,stage-2",
-    "build": "npm run clean && npm run build-server"
+    "build": "sh docker-build.sh"
   },
   "dependencies": {
-    "axios": "^0.15.3",
     "apn": "^2.1.3",
+    "axios": "^0.15.3",
+    "babel-polyfill": "^6.22.0",
+    "babel-register": "^6.22.0",
     "bcrypt": "^1.0.2",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
