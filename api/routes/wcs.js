@@ -9,7 +9,7 @@ const moment = require('moment');
 const ObjectId = require('mongoose').Types.ObjectId;
 const Report = require('../schemas/report');
 
-import {Counter} from '../generator/counter';
+import { Counter } from '../generator/counter';
 let counter = new Counter();
 counter.notificationFunction = (wcId, count) => {}; // @todo here register call function
 
@@ -47,26 +47,26 @@ router.get('/', (req, res) => {
 })
 
 router.get('/:wcId', (req, res) => {
-  const { wcId } = req.params
-  Wc.findById(wcId) //, 'id categoryId status banner active')
-    .then(item => {
-      if(!item) {
-        return res.status(404).json({
-           status: 'error',
-           message: 'Wc not found'
-        });
-      }
-      return res.json({
-        status: 'success',
-        data: item
-      })
-    })
-    .catch(() => {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Wrong wc id'
-      })
-    })
+    const { wcId } = req.params
+    Wc.findById(wcId) //, 'id categoryId status banner active')
+        .then(item => {
+            if (!item) {
+                return res.status(404).json({
+                    status: 'error',
+                    message: 'Wc not found'
+                });
+            }
+            return res.json({
+                status: 'success',
+                data: item
+            })
+        })
+        .catch(() => {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Wrong wc id'
+            })
+        })
 })
 
 const apnProvider = new apn.Provider({
@@ -90,16 +90,16 @@ const sendNotification = deviceToken => {
 }
 
 router.get('/:wcId/notify', (req, res) => {
-  const { wcId } = req.params
-  Wc.findById(wcId)
-  .then(wc => {
-    return Promise.all(wc.deviceTokens.map(sendNotification))
-  })
-  .then((results) => {
-    console.log(results)
-    return res.status(200).json(results).end()
-  })
-  .catch(err => console.log(err))
+    const { wcId } = req.params
+    Wc.findById(wcId)
+        .then(wc => {
+            return Promise.all(wc.deviceTokens.map(sendNotification))
+        })
+        .then((results) => {
+            console.log(results)
+            return res.status(200).json(results).end()
+        })
+        .catch(err => console.log(err))
 })
 
 router.post('/:wcId/notify', (req, res) => {
@@ -114,9 +114,12 @@ router.post('/:wcId/notify', (req, res) => {
 
 router.get('/:wcId/last', (req, res) => {
     if ('from' in req.query) {
-        Report.find({wcId: new ObjectId(req.params.wcId), date: {
-            $gte: moment(req.query.from).toDate()
-        }})
+        Report.find({
+                wcId: new ObjectId(req.params.wcId),
+                date: {
+                    $gte: moment(req.query.from).toDate()
+                }
+            })
             .then((items) => {
                 res.json({
                     status: 'success',
@@ -136,84 +139,84 @@ const expSchema = joi.object({
 }).required()
 
 router.post('/:wcId/subscribe', validate('body', expSchema), (req, res) => {
-  const { deviceToken } = req.body
-  const { wcId } = req.params
-  if (req.headers['X-Auth-token']) {
-    const adminWcId = req.headers['X-Auth-token']
-    Wc.find({ token: adminWcId })
-    .then(() => {
-      if(!wc) {
-        return res.sendStatus(404).end()
-      }
-      wc.adminDeviceTokens.push(deviceToken)
-    })
-    .then(() => {
-      res.sendStatus(201).end()
-    })
-    .catch(err => console.log(err))
-  } else {
-    Wc.findById(wcId)
-    .then(wc => {
-      if(!wc) {
-        return res.sendStatus(404).end()
-      }
-      wc.deviceTokens.push(deviceToken)
-      return wc.save()
-    })
-    .then(() => {
-      return res.sendStatus(204).end()
-    })
-    .catch(err => {
-      console.log(err)
-      res.sendStatus(500)
-    })
-  }
+    const { deviceToken } = req.body
+    const { wcId } = req.params
+    if (req.headers['X-Auth-token']) {
+        const adminWcId = req.headers['X-Auth-token']
+        Wc.find({ token: adminWcId })
+            .then(() => {
+                if (!wc) {
+                    return res.sendStatus(404).end()
+                }
+                wc.adminDeviceTokens.push(deviceToken)
+            })
+            .then(() => {
+                res.sendStatus(201).end()
+            })
+            .catch(err => console.log(err))
+    } else {
+        Wc.findById(wcId)
+            .then(wc => {
+                if (!wc) {
+                    return res.sendStatus(404).end()
+                }
+                wc.deviceTokens.push(deviceToken)
+                return wc.save()
+            })
+            .then(() => {
+                return res.sendStatus(204).end()
+            })
+            .catch(err => {
+                console.log(err)
+                res.sendStatus(500)
+            })
+    }
 })
 
 router.post('/:wcId/unsubscribe', validate('body', expSchema), (req, res) => {
-  const { deviceToken } = req.body
-  const { wcId } = req.params
-  if (req.headers['X-Auth-token']) {
-    const adminWcId = req.headers['X-Auth-token']
-    Wc.find({ token: adminWcId })
-    .then(wc => {
-      if(!wc) {
-        return res.sendStatus(404).end()
-      }
-      const deviceTokenIndex = wc.adminDeviceTokens.findIndex(deviceToken)
-      if (deviceTokenIndex === -1) {
-        return res.sendStatus(404).end()
-      }
-      wc.adminDeviceTokens = [
-        ...wc.adminDeviceTokens.slice(0, deviceTokenIndex),
-        ...wc.adminDeviceTokens.slice(deviceTokenIndex + 1)
-      ]
-      return wc.save()
-    })
-    .then(() => res.sendStatus(201).end())
-    .catch(err => {
-      console.log(err)
-      res.sendStatus(500)
-    })
-  } else {
-    Wc.findById(wcId)
-    .then(wc => {
-      const deviceTokenIndex = wc.deviceTokens.indexOf(deviceToken)
-      if (deviceTokenIndex === -1) {
-        return res.sendStatus(404).end()
-      }
-      wc.deviceTokens = [
-        ...wc.deviceTokens.slice(0, deviceTokenIndex),
-        ...wc.deviceTokens.slice(deviceTokenIndex + 1)
-      ]
-      return wc.save()
-    })
-    .then(() => res.sendStatus(204).end())
-    .catch(err => {
-      console.log(err)
-      res.sendStatus(500)
-    })
-  }
+    const { deviceToken } = req.body
+    const { wcId } = req.params
+    if (req.headers['X-Auth-token']) {
+        const adminWcId = req.headers['X-Auth-token']
+        Wc.find({ token: adminWcId })
+            .then(wc => {
+                if (!wc) {
+                    return res.sendStatus(404).end()
+                }
+                const deviceTokenIndex = wc.adminDeviceTokens.findIndex(deviceToken)
+                if (deviceTokenIndex === -1) {
+                    return res.sendStatus(404).end()
+                }
+                wc.adminDeviceTokens = [
+                    ...wc.adminDeviceTokens.slice(0, deviceTokenIndex),
+                    ...wc.adminDeviceTokens.slice(deviceTokenIndex + 1)
+                ]
+                return wc.save()
+            })
+            .then(() => res.sendStatus(201).end())
+            .catch(err => {
+                console.log(err)
+                res.sendStatus(500)
+            })
+    } else {
+        Wc.findById(wcId)
+            .then(wc => {
+                const deviceTokenIndex = wc.deviceTokens.indexOf(deviceToken)
+                if (deviceTokenIndex === -1) {
+                    return res.sendStatus(404).end()
+                }
+                wc.deviceTokens = [
+                    ...wc.deviceTokens.slice(0, deviceTokenIndex),
+                    ...wc.deviceTokens.slice(deviceTokenIndex + 1)
+                ]
+                return wc.save()
+            })
+            .then(() => res.sendStatus(204).end())
+            .catch(err => {
+                console.log(err)
+                res.sendStatus(500)
+            })
+    }
 })
 
 /**
@@ -240,32 +243,39 @@ router.post('/:wcId/unsubscribe', validate('body', expSchema), (req, res) => {
 //     res.json({});
 // });
 
-router.put('/:token', (req, res) => {
-    Wc.findOne({ token: req.params.token }, (err, item) => {
-        if(!item) {
-            res.status(404);
-            return res.json({
-                status: 'error',
-                message: 'Wc not found'
+router.put('/:wcId', (req, res) => {
+    Wc.findById(req.params.wcId)
+        .then(item => {
+            if (!item) {
+                res.status(404);
+                return res.json({
+                    status: 'error',
+                    message: 'Wc not found'
+                });
+            }
+            if ('banner' in req.body) {
+                item.banner = req.body.banner;
+            }
+            if ('usageCount' in req.body) {
+                item.usageCount = req.body.usageCount; // @todo validate in notifications
+            }
+            if ('inactivity' in req.body) {
+                item.inactivity = req.body.inactivity; // @todo validate in notifications
+            }
+
+            item.save();
+
+            res.json({
+                status: 'success',
+                data: item
             });
-        }
-        if ('banner' in req.body) {
-            item.banner = req.body.banner;
-        }
-        if ('usageCount' in req.body) {
-            item.usageCount = req.body.usageCount; // @todo validate in notifications
-        }
-        if ('inactivity' in req.body) {
-            item.inactivity = req.body.inactivity; // @todo validate in notifications
-        }
-
-        item.save();
-
-        res.json({
-            status: 'success',
-            data: item
+        })
+        .catch(() => {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Wrong wc id'
+            })
         });
-    });
 });
 
 module.exports = router;
