@@ -239,10 +239,9 @@ router.post('/:wcId/unsubscribe', validate('body', expSchema), (req, res) => {
                 if (deviceTokenIndex === -1) {
                     return res.sendStatus(404).end()
                 }
-                wc.deviceTokens = [
-                    ...wc.deviceTokens.slice(0, deviceTokenIndex),
-                    ...wc.deviceTokens.slice(deviceTokenIndex + 1)
-                ]
+                wc.deviceTokens = wc.deviceTokens.filter(deviceTokenInDB => {
+                  return deviceTokenInDB !== deviceToken
+                })
                 return wc.save()
             })
             .then(() => res.sendStatus(204).end())
