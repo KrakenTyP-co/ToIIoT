@@ -6,17 +6,16 @@ const cors = require('cors')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const compression = require('compression')
+import { Generator } from './generator/generator'
+const mongoose = require('mongoose')
 
-import {Generator} from './generator/generator';
-    // const auth = require('./src/auth')
-
-const mongoose = require('mongoose');
 let options = {
   db: { native_parser: true },
   server: { poolSize: 5 },
 }
 options.server.socketOptions = { keepAlive: -1 };
 mongoose.connect(`mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/toiiot`, options);
+mongoose.Promise = global.Promise
 
 const app = express()
 

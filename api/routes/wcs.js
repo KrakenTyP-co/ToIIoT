@@ -37,7 +37,8 @@ router.get('/', (req, res) => {
 
 router.get('/:wcId', (req, res) => {
   const { wcId } = req.params
-  Wc.findById(wcId, 'id categoryId status banner active')
+  Wc.findById(wcId)
+    // 'id categoryId status banner active')
     .then(item => {
       if(!item) {
         return res.status(404).end()
@@ -72,13 +73,15 @@ const sendNotification = deviceToken => {
   return apnProvider.send(notification, deviceToken)
 }
 
-router.get('/:wcId/notify', async (req, res) => {
-  const { wcId } = res.params
-  const wc = await Wc.findById(wcId)
-  Promise.all(wc.deviceTokens.map(sendNotification))
+router.get('/:wcId/notify', (req, res) => {
+  const { wcId } = req.params
+  Wc.findById(wcId)
+  .then(wc => {
+    return Promise.all(wc.deviceTokens.map(sendNotification))
+  })
   .then((results) => {
     console.log(results)
-    res.sendStatus(204)
+    return res.status(200).json(results).end()
   })
   .catch(err => console.log(err))
 })
@@ -87,53 +90,84 @@ const expSchema = joi.object({
   deviceToken: joi.string().required()
 }).required()
 
-router.post('/:wcId/subscribe', validate('body', expSchema), async (req, res) => {
+router.post('/:wcId/subscribe', validate('body', expSchema), (req, res) => {
   const { deviceToken } = req.body
+  const { wcId } = req.params
   if (req.headers['X-Auth-token']) {
     const adminWcId = req.headers['X-Auth-token']
-    const wc = await Wc.find({ token: adminWcId })
-    if(!wc) {
-      return res.sendStatus(404).end()
-    }
-    wc.adminDeviceTokens.push(deviceToken)
-    wc.save()
-      .then(() => res.status(201).json())
-      .catch(err => console.log(err))
+    Wc.find({ token: adminWcId })
+    .then(() => {
+      if(!wc) {
+        return res.sendStatus(404).end()
+      }
+      wc.adminDeviceTokens.push(deviceToken)
+    })
+    .then(() => {
+      res.sendStatus(201).end()
+    })
+    .catch(err => console.log(err))
   } else {
-    const wc = await Wc.findById(wcId)
-    wc.deviceTokens.push(deviceToken)
-    wc.save()
-      .then(() => res.status(201).json())
-      .catch(err => console.log(err))
+    Wc.findById(wcId)
+    .then(wc => {
+      if(!wc) {
+        return res.sendStatus(404).end()
+      }
+      wc.deviceTokens.push(deviceToken)
+      return wc.save()
+    })
+    .then(() => {
+      return res.sendStatus(204).end()
+    })
+    .catch(err => {
+      console.log(err)
+      res.sendStatus(500)
+    })
   }
 })
 
-router.post('/:wcId/unsubscribe', validate('body', expSchema), async (req, res) => {
+router.post('/:wcId/unsubscribe', validate('body', expSchema), (req, res) => {
   const { deviceToken } = req.body
+  const { wcId } = req.params
   if (req.headers['X-Auth-token']) {
     const adminWcId = req.headers['X-Auth-token']
-    const wc = await Wc.find({ token: adminWcId })
-    if(!wc) {
-      return res.sendStatus(404).end()
-    }
-    const deviceTokenIndex = wc.adminDeviceTokens.findIndex(deviceToken)
-    wc.adminDeviceTokens = [
-      ...wc.adminDeviceTokens.slice(0, deviceTokenIndex),
-      ...wc.adminDeviceTokens.slice(deviceTokenIndex + 1)
-    ]
-    wc.save()
-      .then(() => res.status(201).json())
-      .catch(err => console.log(err))
+    Wc.find({ token: adminWcId })
+    .then(wc => {
+      if(!wc) {
+        return res.sendStatus(404).end()
+      }
+      const deviceTokenIndex = wc.adminDeviceTokens.findIndex(deviceToken)
+      if (deviceTokenIndex === -1) {
+        return res.sendStatus(404).end()
+      }
+      wc.adminDeviceTokens = [
+        ...wc.adminDeviceTokens.slice(0, deviceTokenIndex),
+        ...wc.adminDeviceTokens.slice(deviceTokenIndex + 1)
+      ]
+      return wc.save()
+    })
+    .then(() => res.sendStatus(201).end())
+    .catch(err => {
+      console.log(err)
+      res.sendStatus(500)
+    })
   } else {
-    const wc = await Wc.findById(wcId)
-    const deviceTokenIndex = wc.deviceTokens.findIndex(deviceToken)
-    wc.deviceTokens = [
-      ...wc.deviceTokens.slice(0, deviceTokenIndex),
-      ...wc.deviceTokens.slice(deviceTokenIndex + 1)
-    ]
-    wc.save()
-      .then(() => res.status(201).json())
-      .catch(err => console.log(err))
+    Wc.findById(wcId)
+    .then(wc => {
+      const deviceTokenIndex = wc.deviceTokens.indexOf(deviceToken)
+      if (deviceTokenIndex === -1) {
+        return res.sendStatus(404).end()
+      }
+      wc.deviceTokens = [
+        ...wc.deviceTokens.slice(0, deviceTokenIndex),
+        ...wc.deviceTokens.slice(deviceTokenIndex + 1)
+      ]
+      return wc.save()
+    })
+    .then(() => res.sendStatus(204).end())
+    .catch(err => {
+      console.log(err)
+      res.sendStatus(500)
+    })
   }
 })
 
