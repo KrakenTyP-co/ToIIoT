@@ -59,7 +59,10 @@ router.get('/:wcId', (req, res) => {
       })
     })
     .catch(() => {
-      console.error(err)
+      return res.status(400).json({
+        status: 'error',
+        message: 'Wrong wc id'
+      })
     })
 })
 
@@ -255,25 +258,6 @@ router.put('/:token', (req, res) => {
 
         item.save();
 
-        res.json({
-            status: 'success',
-            data: item
-        });
-    });
-});
-
-router.get('/:token', (req, res) => {
-    Wc.findOne({ token: req.params.token }, (err, item) => {
-        if (!item) {
-            res.status(404);
-            return res.json({
-                status: 'error',
-                message: 'Wc not found'
-            });
-        }
-        if (err) {
-            console.error(err);
-        }
         res.json({
             status: 'success',
             data: item
