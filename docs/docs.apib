@@ -8,7 +8,7 @@ API Docs...
 - API URL: http://pluto.treecom.net:8088/
 - X-Auth-Token header is WC device token
 
-## Toilets Collection [/wc]
+## WC Collection [/wc]
 
 ### List WCs [GET /wc{?cateogry}]
 
@@ -94,7 +94,7 @@ Get toilate state. Header is optional.
             }
 
 
-### Subscribe to WC state [POST /wc/{_id}/subsribe]
+### Subscribe to WC [POST /wc/{_id}/subsribe]
 
 Subscribe user mobile to WC. If header with wc token is set it mean manager is subscribing to alerts.
 
@@ -130,7 +130,7 @@ Header is optional.
 
 
 
-### Unsubscribe to WC state [POST /wc/{_id}/unsubsribe]
+### Unsubscribe to WC [POST /wc/{_id}/unsubsribe]
 
 
 Unsubscribe user mobile from WC. If header with wc token is set it mean manager is subscribing to alerts.
@@ -163,6 +163,38 @@ Header is optional.
 
             {
                "status": "success"
+            }
+
+
+### WC states report [GET /wc/{_id}/last{?from}]
+
+Header is required.
+
+
++ Parameters
+
+    + from: 2017-02-01 (optional, string) - From date
+
+
++ Request (application/json)
+
+
+    + Headers
+
+            X-Auth-Token: JCAiSjGefNprusgyRmtN51_CoQUutKOa9cPBu18kDCI
+
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "status": "success"
+                "data": [
+                    {
+                        "_id": "lxmlaksxmlkasml"
+                    }
+                ]
             }
 
 
