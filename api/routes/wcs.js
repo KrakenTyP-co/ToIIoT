@@ -150,7 +150,7 @@ router.post('/:wcId/subscribe', validate('body', expSchema), (req, res) => {
   if (req.headers['X-Auth-token']) {
     const adminWcId = req.headers['X-Auth-token']
     Wc.find({ token: adminWcId })
-    .then(() => {
+    .then(wc => {
       if(!wc) {
         return res.sendStatus(404).end()
       }
