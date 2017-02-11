@@ -17,15 +17,15 @@ npm install --production &&
 ## Build docker image ##
 
 # pull fresh base image:
-docker pull ${BASEIMG} &&
+sudo docker pull ${BASEIMG} &&
 # build container
-docker build --rm -t ${CONTAINER}:${TAG} . &&
+sudo docker build --rm -t ${CONTAINER}:${TAG} . &&
 # create tag on container
-docker tag ${CONTAINER}:${TAG} ${REGISTRY}/${CONTAINER}:${TAG} &&
+sudo docker tag ${CONTAINER}:${TAG} ${REGISTRY}/${CONTAINER}:${TAG} &&
 # push to our registry
-docker push ${REGISTRY}/${CONTAINER}:${TAG} &&
+sudo docker push ${REGISTRY}/${CONTAINER}:${TAG} &&
 # clean images
-docker rmi -f ${CONTAINER}:${TAG} ${REGISTRY}/${CONTAINER}:${TAG} ${BASEIMG}
+# docker rmi -f ${CONTAINER}:${TAG} ${REGISTRY}/${CONTAINER}:${TAG} ${BASEIMG}
 
 
 # clean build folder

@@ -1,6 +1,13 @@
 version: '2.0'
 services:
 
+  tollot:
+    container_name: tollot-1
+    restart: always
+    image: docker-registry.treecom.net:5000/treecom/tollot
+    ports:
+      - 8088:8081
+
   mongo:
     container_name: mongo-1
     restart: always
