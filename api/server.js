@@ -1,11 +1,13 @@
 require('dotenv').config()
+require("babel-core/register")
+require("babel-polyfill")
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const compression = require('compression')
 
-import {Generator} from './api/generator/generator';
+import {Generator} from './generator/generator';
     // const auth = require('./src/auth')
 
 const mongoose = require('mongoose');
@@ -24,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(morgan(process.env.LOGGER_LEVEL))
 app.use(cors())
 app.use(compression())
-app.use(require('./api/routes'))
+app.use(require('./routes'))
 
 app.listen(process.env.PORT, process.env.HOST, () => {
     console.log(`App listening: http://${process.env.HOST}:${process.env.PORT}`)

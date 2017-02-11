@@ -4,8 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js --exec babel-node",
-    "debug": "node --inspect index.js"
+    "start": "nodemon api/server.js --exec babel-node",
+    "start:prod": "node dist/server.js",
+    "debug": "node --inspect index.js",
+    "clean": "rm -rf dist && mkdir dist",
+    "build-server": "babel api -d dist --presets latest,stage-2",
+    "build": "npm run clean && npm run build-server"
   },
   "dependencies": {
     "axios": "^0.15.3",
