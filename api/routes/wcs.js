@@ -143,7 +143,7 @@ router.get('/:wcId/last', (req, res) => {
                 .catch(() => {
                     return res.status(400).json({
                         status: 'error',
-                        message: 'Wrong wc id'
+                        message: 'Wrong wc id or device is offline'
                     })
                 });
         } else {
@@ -155,7 +155,7 @@ router.get('/:wcId/last', (req, res) => {
     } catch (e) {
         return res.status(400).json({
             status: 'error',
-            message: 'Something goes wrong (wcid, date format)'
+            message: 'Something goes wrong (wcid, date format or device is offline)'
         })
     }
 });
