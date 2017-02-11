@@ -9,36 +9,41 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const Report = require('../schemas/report');
 
 router.get('/', (req, res) => {
-  const params = req.query
-  if('category' in params) {
-    Wc.find({
-      categoryId: new ObjectId(params.category)
-    }, 'id categoryId status banner active', (err, item) => {
-      if(err) {
-        console.error(err)
-      }
-      res.json({
-        status: 'success',
-        data: item
-      })
-    })
-  } else {
-    Wc.find((err, items) => {
-      if (err) {
-        console.error(err)
-      }
-      res.json({
-        status: 'success',
-        data: items
-      })
-    })
-  }
+    const params = req.query
+    if ('category' in params) {
+        try {
+            let objId = new ObjectId(params.category);
+            Wc.find({ categoryId: objId }, (err, item) => {
+                if (err) {
+                    console.error(err);
+                }
+                res.json({
+                    status: 'success',
+                    data: item
+                });
+            });
+        } catch (e) {
+            res.status(400).json({
+                status: 'error',
+                message: 'Invalid category'
+            });
+        }
+    } else {
+        Wc.find((err, items) => {
+            if (err) {
+                console.error(err)
+            }
+            res.json({
+                status: 'success',
+                data: items
+            })
+        })
+    }
 })
 
 router.get('/:wcId', (req, res) => {
   const { wcId } = req.params
-  Wc.findById(wcId)
-    // 'id categoryId status banner active')
+  Wc.findById(wcId) //, 'id categoryId status banner active')
     .then(item => {
       if(!item) {
         return res.status(404).end()
@@ -54,23 +59,23 @@ router.get('/:wcId', (req, res) => {
 })
 
 const apnProvider = new apn.Provider({
-  token: {
-    key: process.env.IOS_PATH_TO_P8_FILE,
-    keyId: process.env.IOS_KEY_ID,
-    teamId: process.env.IOS_TEAM_ID
-  },
-  production: false
+    token: {
+        key: process.env.IOS_PATH_TO_P8_FILE,
+        keyId: process.env.IOS_KEY_ID,
+        teamId: process.env.IOS_TEAM_ID
+    },
+    production: false
 })
 
 const sendNotification = deviceToken => {
-  const notification = new apn.Notification()
-  notification.topic = process.env.IOS_BUNDLE_ID
-  notification.expiry = ms('1h')
-  notification.badge = 1
-  notification.sound = 'ping.aiff'
-  notification.alert = 'Hello World \u270C'
-  notification.payload = { id: 123 }
-  return apnProvider.send(notification, deviceToken)
+    const notification = new apn.Notification()
+    notification.topic = process.env.IOS_BUNDLE_ID
+    notification.expiry = ms('1h')
+    notification.badge = 1
+    notification.sound = 'ping.aiff'
+    notification.alert = 'Hello World \u270C'
+    notification.payload = { id: 123 }
+    return apnProvider.send(notification, deviceToken)
 }
 
 router.get('/:wcId/notify', (req, res) => {
@@ -87,7 +92,7 @@ router.get('/:wcId/notify', (req, res) => {
 })
 
 const expSchema = joi.object({
-  deviceToken: joi.string().required()
+    deviceToken: joi.string().required()
 }).required()
 
 router.post('/:wcId/subscribe', validate('body', expSchema), (req, res) => {
@@ -196,7 +201,7 @@ router.post('/:wcId/unsubscribe', validate('body', expSchema), (req, res) => {
 // });
 
 router.put('/:token', (req, res) => {
-    Wc.findOne({token: req.params.token}, (err, item) => {
+    Wc.findOne({ token: req.params.token }, (err, item) => {
         if ('banner' in req.body) {
             item.banner = req.body.banner;
         }
@@ -217,7 +222,7 @@ router.put('/:token', (req, res) => {
 });
 
 router.get('/:token', (req, res) => {
-    Wc.findOne({token: req.params.token}, (err, item) => {
+    Wc.findOne({ token: req.params.token }, (err, item) => {
         if (!item) {
             res.status(404);
             return res.json({
