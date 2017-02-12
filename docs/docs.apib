@@ -299,11 +299,16 @@ Header is required.
 
 ## Reports Collection [/reports]
 
-### Get reports [GET /reports]
+### Get reports [GET /reports/{type}/{action}]
 
 Header is required.
 
 + Request
+
+    + Parameters
+
+        + type: daily (optional, string) - Can be hourly, daily, mountly
+        + action: sum (optional, string) - Can be sum, count
 
     + Headers
 
